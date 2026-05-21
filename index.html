@@ -30,7 +30,7 @@ select:focus,input:focus{outline:none;border-color:var(--gold)}
 label{display:block;font-size:13px;color:var(--dim);margin-bottom:4px}
 .fr{margin-bottom:12px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;border-radius:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;border-radius:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;touch-action:manipulation}
 .btn-primary{background:var(--gold);color:#111}.btn-primary:hover{background:var(--goldd)}
 .btn-primary:disabled{background:#3a3a3a;color:#666;cursor:not-allowed}
 .btn-ghost{background:var(--s2);color:var(--tx);border:1px solid #444}
@@ -65,7 +65,7 @@ label{display:block;font-size:13px;color:var(--dim);margin-bottom:4px}
 .ph-player{font-size:26px;font-weight:900;color:var(--gold);margin-bottom:2px}
 .ph-vs{font-size:13px;color:var(--dim);margin-bottom:18px}
 .throw-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0 18px}
-.tb{width:68px;height:68px;border-radius:50%;font-size:34px;font-weight:700;border:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center}
+.tb{width:68px;height:68px;border-radius:50%;font-size:34px;font-weight:700;border:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 .tb.minus{background:#3a3a3a;color:#ddd}.tb.plus{background:var(--gl);color:#fff}
 .tb:active{transform:scale(.91)}
 .tv{font-size:62px;font-weight:900;min-width:80px;text-align:center}
@@ -100,7 +100,7 @@ label{display:block;font-size:13px;color:var(--dim);margin-bottom:4px}
 .pw-arrow{font-size:22px;font-weight:900}
 .pw-arrow.up{color:var(--ok)}.pw-arrow.dn{color:var(--red)}.pw-arrow.nc{color:#555}
 .pw-syn{font-size:13px;color:var(--dim);line-height:1.55;margin-bottom:10px;font-style:italic}
-.pw-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pw-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .pw-stat{text-align:center;background:var(--s2);border-radius:8px;padding:7px 4px}
 .pw-sv{font-size:16px;font-weight:800;color:var(--gold)}
 .pw-sl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
@@ -143,7 +143,12 @@ label{display:block;font-size:13px;color:var(--dim);margin-bottom:4px}
 .dt-name{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:10px}
 .dt-row{display:flex;align-items:center;justify-content:center;gap:10px}
 .dt-val{font-size:48px;font-weight:900;color:var(--gold);min-width:56px;text-align:center;line-height:1}
-.dt-btn{width:52px;height:52px;border-radius:50%;font-size:28px;font-weight:700;border:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dt-btn{width:52px;height:52px;border-radius:50%;font-size:28px;font-weight:700;border:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;touch-action:manipulation}
+/* Assign-player buttons for new single-pending input */
+.assign-btn{flex:1;background:var(--s2);border:2px solid #444;border-radius:12px;padding:14px 8px;cursor:pointer;text-align:center;transition:all .15s;color:var(--tx);touch-action:manipulation}
+.assign-btn:active{transform:scale(.95)}
+.assign-btn.has-val{border-color:var(--gl);background:#1a3010}
+.assign-lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
 .dt-btn.minus{background:#3a3a3a;color:#ddd}.dt-btn.plus{background:var(--gl);color:#fff}
 .dt-btn:active{transform:scale(.91)}
 .dt-divider{width:1px;background:#333;align-self:stretch;flex-shrink:0}
@@ -285,28 +290,33 @@ label{display:block;font-size:13px;color:var(--dim);margin-bottom:4px}
 
       <!-- Dual-player input — used for 2v2 and 1v1 -->
       <div id="dualThrow" style="display:none">
-        <div class="dual-throw">
-          <div class="dt-player">
-            <div class="dt-name" id="dtNameA">—</div>
-            <div class="dt-row">
-              <button class="dt-btn minus" onclick="adjDual('a',-1)">−</button>
-              <div class="dt-val" id="dtValA">0</div>
-              <button class="dt-btn plus" onclick="adjDual('a',1)">+</button>
-            </div>
-          </div>
-          <div class="dt-divider"></div>
-          <div class="dt-player">
-            <div class="dt-name" id="dtNameB">—</div>
-            <div class="dt-row">
-              <button class="dt-btn minus" onclick="adjDual('b',-1)">−</button>
-              <div class="dt-val" id="dtValB">0</div>
-              <button class="dt-btn plus" onclick="adjDual('b',1)">+</button>
-            </div>
+        <div style="text-align:center;margin-bottom:12px">
+          <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Bags in hole — pending:</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:20px">
+            <button class="tb minus" onclick="adjPending(-1)">−</button>
+            <div class="tv" id="pendingDisp">0</div>
+            <button class="tb plus" onclick="adjPending(1)">+</button>
           </div>
         </div>
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <button class="assign-btn" id="assignBtnA" onclick="assignPending('a')">
+            <div class="dt-name" id="dtNameA">—</div>
+            <div class="dt-val" id="dtValA">0</div>
+            <div class="assign-lbl">tap to assign</div>
+          </button>
+          <button class="assign-btn" id="assignBtnB" onclick="assignPending('b')">
+            <div class="dt-name" id="dtNameB">—</div>
+            <div class="dt-val" id="dtValB">0</div>
+            <div class="assign-lbl">tap to assign</div>
+          </button>
+        </div>
+        <button class="btn btn-ghost btn-sm btn-full" onclick="undoLastAssign()" style="margin-bottom:10px;font-size:13px">↩ Undo Last Assign</button>
       </div>
 
-      <button class="btn btn-primary btn-full" onclick="confirmThrow()">Confirm</button>
+      <div style="text-align:right;margin-bottom:8px">
+        <button class="btn btn-ghost btn-sm" onclick="undoLastThrow()" style="font-size:12px;padding:6px 10px;opacity:.7">↩ Undo Last End</button>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="confirmThrow()">Confirm End →</button>
     </div>
 
     <div id="roundSumCard" style="display:none">
@@ -322,8 +332,16 @@ label{display:block;font-size:13px;color:var(--dim);margin-bottom:4px}
       </div>
     </div>
 
-    <div style="text-align:center;margin-top:14px">
-      <button class="btn btn-ghost btn-sm" onclick="abandonGame()">✕ Abandon Game</button>
+    <div id="sideSelectCard" style="display:none">
+      <div class="go-card">
+        <div class="go-win" id="ssTitle">Game 2</div>
+        <div class="go-sub">Which side throws first?</div>
+        <div class="lane-opts" id="ssOpts" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;padding-top:14px;border-top:1px solid #2a2a2a">
+      <button class="btn btn-ghost btn-sm" onclick="abandonGame()" style="color:#aa4444;font-size:12px;opacity:.65">✕ Abandon Game</button>
     </div>
   </div>
 
@@ -380,6 +398,9 @@ let SCRIPT_URL = localStorage.getItem('cn_script_url') || '';
 let GS = null;
 let throwVal = 0;         // used for 1v1v1 single-player input
 let throwValA = 0, throwValB = 0; // used for 2v2 / 1v1 dual input
+let pendingVal = 0;       // pending bags before assigning to a player
+let tapHistory = [];      // [{side:'a'|'b', amount:n}] for undo within an end
+let gsHistory = [];       // GS snapshots for undo-last-end
 
 // ══════════════════════════════════════════════════════
 //  INIT
@@ -583,11 +604,11 @@ function calcOdds(aP, bP) {
   if (ROUNDS_DATA.length > 10) {
     const cA = avg(aP.map(p => {
       const r = rst[p]; if (!r) return null;
-      return r.clutchThrows >= 2 ? r.clutchRaw / r.clutchThrows : (r.throws > 0 ? r.totalRaw / r.throws : null);
+      return r.clutchAvg !== null ? r.clutchAvg : (r.throws > 0 ? r.totalRaw / r.throws : null);
     }).filter(x => x !== null));
     const cB = avg(bP.map(p => {
       const r = rst[p]; if (!r) return null;
-      return r.clutchThrows >= 2 ? r.clutchRaw / r.clutchThrows : (r.throws > 0 ? r.totalRaw / r.throws : null);
+      return r.clutchAvg !== null ? r.clutchAvg : (r.throws > 0 ? r.totalRaw / r.throws : null);
     }).filter(x => x !== null));
     if (cA > 0 || cB > 0) { s7 = cA / (cA + cB + 1e-9); w7 = 0.10; }
   }
@@ -653,10 +674,13 @@ function startGame() {
     p3:[],
     matchWinsA:0, matchWinsB:0, currentGame:1, gameScores:[],
     scoreA:0, scoreB:0, round:1, phase:'',
-    e1RawA:0, e1RawB:0, e2RawA:0, e2RawB:0,
+    e1RawA:0, e1RawB:0, e2RawA:0, e2RawB:0, e2Played:false,
     rounds:[],
-    duel:1, duelScores:{1:{a:0,b:0},2:{a:0,b:0},3:{a:0,b:0}}
+    duel:1, duelScores:{1:{a:0,b:0},2:{a:0,b:0},3:{a:0,b:0}},
+    // Comeback tracking
+    maxDeficitA:0, maxDeficitB:0
   };
+  gsHistory = [];
   if (t==='2v2_match'||t==='2v2_game') {
     GS.aP1=gv('taP1'); GS.aP2=gv('taP2');
     GS.bP1=gv('tbP1'); GS.bP2=gv('tbP2');
@@ -801,60 +825,170 @@ function duelPair(d) {
 // ══════════════════════════════════════════════════════
 //  THROW
 // ══════════════════════════════════════════════════════
+// ── 1v1v1 single input ──
 function adj(delta) {
   throwVal=Math.max(0,Math.min(12,throwVal+delta));
   ge('tvVal').textContent=throwVal;
 }
 
-function adjDual(side, delta) {
-  if (side==='a') { throwValA=Math.max(0,Math.min(12,throwValA+delta)); ge('dtValA').textContent=throwValA; }
-  else            { throwValB=Math.max(0,Math.min(12,throwValB+delta)); ge('dtValB').textContent=throwValB; }
+// ── New pending/assign input for 2v2 & 1v1 ──
+function adjPending(delta) {
+  pendingVal=Math.max(0,Math.min(12,pendingVal+delta));
+  ge('pendingDisp').textContent=pendingVal;
+}
+
+function assignPending(side) {
+  if (pendingVal===0) return;
+  tapHistory.push({side, amount:pendingVal});
+  if (side==='a') { throwValA+=pendingVal; ge('dtValA').textContent=throwValA; }
+  else            { throwValB+=pendingVal; ge('dtValB').textContent=throwValB; }
+  // Highlight the button that has a value
+  ge('assignBtnA').classList.toggle('has-val', throwValA>0);
+  ge('assignBtnB').classList.toggle('has-val', throwValB>0);
+  pendingVal=0;
+  ge('pendingDisp').textContent='0';
+}
+
+function undoLastAssign() {
+  const last=tapHistory.pop(); if(!last) return;
+  if (last.side==='a') { throwValA=Math.max(0,throwValA-last.amount); ge('dtValA').textContent=throwValA; }
+  else                 { throwValB=Math.max(0,throwValB-last.amount); ge('dtValB').textContent=throwValB; }
+  ge('assignBtnA').classList.toggle('has-val', throwValA>0);
+  ge('assignBtnB').classList.toggle('has-val', throwValB>0);
+  pendingVal=last.amount;
+  ge('pendingDisp').textContent=pendingVal;
 }
 
 function resetDual() {
-  throwValA=0; throwValB=0;
+  throwValA=0; throwValB=0; pendingVal=0; tapHistory=[];
   ge('dtValA').textContent='0'; ge('dtValB').textContent='0';
+  ge('pendingDisp').textContent='0';
+  const bA=ge('assignBtnA'), bB=ge('assignBtnB');
+  if(bA) bA.classList.remove('has-val');
+  if(bB) bB.classList.remove('has-val');
+}
+
+// ── Undo-last-end (snapshot-based) ──
+function snapshotGS() {
+  if (!GS) return;
+  gsHistory.push(JSON.parse(JSON.stringify(GS)));
+  if (gsHistory.length>10) gsHistory.shift();
+}
+
+function undoLastThrow() {
+  if (!gsHistory.length) { showStatus('Nothing to undo!','err'); return; }
+  GS=gsHistory.pop();
+  throwVal=0; resetDual();
+  ge('roundSumCard').style.display='none';
+  ge('gameOverCard').style.display='none';
+  const ssc=ge('sideSelectCard'); if(ssc) ssc.style.display='none';
+  ge('phaseCard').style.display='';
+  refreshUI();
+}
+
+// ── Clutch helpers ────────────────────────────────────────────────────────
+// getMomentWeight: how clutch is THIS moment? (independent of who scored what)
+function getMomentWeight(preA, preB, maxDefA, maxDefB, currentGame, isMatch) {
+  const gap=Math.abs(preA-preB), lead=Math.max(preA,preB);
+  const g3=(isMatch&&currentGame>=3)?1.25:1.0;
+  let moment=0;
+  // Classic clutch: close game deep in the score
+  if (gap<=5&&lead>=17) moment=Math.max(moment,(6-gap)/6*4.0*g3);
+  // Comeback: Team A was down 8+, still trailing — urgency grows as opponent nears 21
+  if (preB>preA&&maxDefA>=8) {
+    const defFactor=1+Math.min(maxDefA-8,8)*0.1;   // 1.0–1.8 based on how deep the hole was
+    const urgFactor=1+Math.max(0,preB-16)*0.2;      // 1.0+ as opponent closes on 21
+    moment=Math.max(moment,defFactor*urgFactor*g3);
+  }
+  // Comeback: Team B was down 8+, still trailing
+  if (preA>preB&&maxDefB>=8) {
+    const defFactor=1+Math.min(maxDefB-8,8)*0.1;
+    const urgFactor=1+Math.max(0,preA-16)*0.2;
+    moment=Math.max(moment,defFactor*urgFactor*g3);
+  }
+  return moment;
+}
+
+// getPlayerCV: individual clutch value — rewards bigger scores in bigger moments
+function getPlayerCV(moment, raw, isGameWinner, preA, preB, currentGame, isMatch) {
+  if (raw===0||moment===0) return 0;
+  const contribution=raw/6; // 6 = max bags in hole per end
+  const base=moment*contribution;
+  // Winning throw bonus: this player's team clinched the game in a close spot
+  if (isGameWinner) {
+    const gap=Math.abs(preA-preB);
+    if (gap<=5) {
+      const g3=(isMatch&&currentGame>=3)?1.25:1.0;
+      const winBonus=(6-gap)/6*5.0*g3*contribution;
+      return Math.max(base,winBonus);
+    }
+  }
+  return base;
+}
+
+function updateMaxDeficit(p) {
+  const dA=p.scoreB-p.scoreA, dB=p.scoreA-p.scoreB;
+  if(dA>p.maxDeficitA) p.maxDeficitA=dA;
+  if(dB>p.maxDeficitB) p.maxDeficitB=dB;
 }
 
 function confirmThrow() {
+  snapshotGS(); // save state for undo-last-end
   const p=GS, t=p.type;
 
   if (t==='2v2_match'||t==='2v2_game') {
-    // Dual input — grab both values at once
     const rawA=throwValA, rawB=throwValB;
     resetDual();
-    const isClutch=Math.max(p.scoreA,p.scoreB)>=17&&Math.abs(p.scoreA-p.scoreB)<=3;
+    const preA=p.scoreA, preB=p.scoreB;
+    const moment=getMomentWeight(preA,preB,p.maxDeficitA,p.maxDeficitB,p.currentGame,p.isMatch);
     if (p.phase==='e1') {
       const net=rawA-rawB, aAdd=net>0?net:0, bAdd=net<0?-net:0;
       p.scoreA+=aAdd; p.scoreB+=bAdd;
-      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.aP1,opponent:p.laneA1,raw_score:rawA,team_a_after:p.scoreA-aAdd,team_b_after:p.scoreB-bAdd,is_clutch:isClutch});
-      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.laneA1,opponent:p.aP1,raw_score:rawB,team_a_after:p.scoreA,team_b_after:p.scoreB,is_clutch:isClutch});
+      updateMaxDeficit(p);
+      const isWin=p.scoreA>=21||p.scoreB>=21, teamAWon=p.scoreA>p.scoreB;
+      const cvA=getPlayerCV(moment,rawA,isWin&&teamAWon,preA,preB,p.currentGame,p.isMatch);
+      const cvB=getPlayerCV(moment,rawB,isWin&&!teamAWon,preA,preB,p.currentGame,p.isMatch);
+      const inClutch=moment>0;
+      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.aP1,opponent:p.laneA1,raw_score:rawA,team_a_after:preA,team_b_after:preB,is_clutch:inClutch,clutch_value:+cvA.toFixed(3)});
+      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.laneA1,opponent:p.aP1,raw_score:rawB,team_a_after:p.scoreA,team_b_after:p.scoreB,is_clutch:inClutch,clutch_value:+cvB.toFixed(3)});
       p.e1RawA=rawA; p.e1RawB=rawB;
+      // If game already won after end 1, skip to round summary
+      if (isWin) { p.e2RawA=0; p.e2RawB=0; p.e2Played=false; showRoundSum(); return; }
       p.phase='e2'; refreshUI();
     } else if (p.phase==='e2') {
       const net=rawA-rawB, aAdd=net>0?net:0, bAdd=net<0?-net:0;
       p.scoreA+=aAdd; p.scoreB+=bAdd;
-      p.rounds.push({game_num:p.currentGame,round:p.round,end:2,player:p.aP2,opponent:p.laneA2,raw_score:rawA,team_a_after:p.scoreA-aAdd,team_b_after:p.scoreB-bAdd,is_clutch:isClutch});
-      p.rounds.push({game_num:p.currentGame,round:p.round,end:2,player:p.laneA2,opponent:p.aP2,raw_score:rawB,team_a_after:p.scoreA,team_b_after:p.scoreB,is_clutch:isClutch});
-      p.e2RawA=rawA; p.e2RawB=rawB;
+      updateMaxDeficit(p);
+      const isWin=p.scoreA>=21||p.scoreB>=21, teamAWon=p.scoreA>p.scoreB;
+      const cvA=getPlayerCV(moment,rawA,isWin&&teamAWon,preA,preB,p.currentGame,p.isMatch);
+      const cvB=getPlayerCV(moment,rawB,isWin&&!teamAWon,preA,preB,p.currentGame,p.isMatch);
+      const inClutch=moment>0;
+      p.rounds.push({game_num:p.currentGame,round:p.round,end:2,player:p.aP2,opponent:p.laneA2,raw_score:rawA,team_a_after:preA,team_b_after:preB,is_clutch:inClutch,clutch_value:+cvA.toFixed(3)});
+      p.rounds.push({game_num:p.currentGame,round:p.round,end:2,player:p.laneA2,opponent:p.aP2,raw_score:rawB,team_a_after:p.scoreA,team_b_after:p.scoreB,is_clutch:inClutch,clutch_value:+cvB.toFixed(3)});
+      p.e2RawA=rawA; p.e2RawB=rawB; p.e2Played=true;
       showRoundSum(); return;
     }
 
   } else if (t==='1v1_match'||t==='1v1_game') {
-    // Dual input — both players entered simultaneously
     const rawA=throwValA, rawB=throwValB;
     resetDual();
-    const isClutch=Math.max(p.scoreA,p.scoreB)>=17&&Math.abs(p.scoreA-p.scoreB)<=3;
+    const preA=p.scoreA, preB=p.scoreB;
+    const moment=getMomentWeight(preA,preB,p.maxDeficitA,p.maxDeficitB,p.currentGame,p.isMatch);
     if (p.phase==='p1') {
       const net=rawA-rawB, aAdd=net>0?net:0, bAdd=net<0?-net:0;
       p.scoreA+=aAdd; p.scoreB+=bAdd;
-      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.aP1,opponent:p.bP1,raw_score:rawA,team_a_after:p.scoreA-aAdd,team_b_after:p.scoreB-bAdd,is_clutch:isClutch});
-      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.bP1,opponent:p.aP1,raw_score:rawB,team_a_after:p.scoreA,team_b_after:p.scoreB,is_clutch:isClutch});
+      updateMaxDeficit(p);
+      const isWin=p.scoreA>=21||p.scoreB>=21, teamAWon=p.scoreA>p.scoreB;
+      const cvA=getPlayerCV(moment,rawA,isWin&&teamAWon,preA,preB,p.currentGame,p.isMatch);
+      const cvB=getPlayerCV(moment,rawB,isWin&&!teamAWon,preA,preB,p.currentGame,p.isMatch);
+      const inClutch=moment>0;
+      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.aP1,opponent:p.bP1,raw_score:rawA,team_a_after:preA,team_b_after:preB,is_clutch:inClutch,clutch_value:+cvA.toFixed(3)});
+      p.rounds.push({game_num:p.currentGame,round:p.round,end:1,player:p.bP1,opponent:p.aP1,raw_score:rawB,team_a_after:p.scoreA,team_b_after:p.scoreB,is_clutch:inClutch,clutch_value:+cvB.toFixed(3)});
       p.e1RawA=rawA; p.e1RawB=rawB;
       showRoundSum(); return;
     }
 
-  } else { // 1v1v1 — still single-player sequential entry
+  } else { // 1v1v1 — single-player sequential entry
     const raw=throwVal; throwVal=0;
     const d=p.duel,[pA,pB]=duelPair(d),sc=p.duelScores[d];
     if (p.phase===`d${d}_pa`) { p.e1RawA=raw; p.phase=`d${d}_pb`; }
@@ -862,8 +996,8 @@ function confirmThrow() {
       p.e1RawB=raw;
       const net=p.e1RawA-raw, aAdd=net>0?net:0, bAdd=net<0?-net:0;
       sc.a+=aAdd; sc.b+=bAdd;
-      p.rounds.push({game_num:d,round:p.round,end:1,player:pA,opponent:pB,raw_score:p.e1RawA,team_a_after:sc.a-aAdd,team_b_after:sc.b-bAdd,is_clutch:false});
-      p.rounds.push({game_num:d,round:p.round,end:1,player:pB,opponent:pA,raw_score:raw,team_a_after:sc.a,team_b_after:sc.b,is_clutch:false});
+      p.rounds.push({game_num:d,round:p.round,end:1,player:pA,opponent:pB,raw_score:p.e1RawA,team_a_after:sc.a-aAdd,team_b_after:sc.b-bAdd,is_clutch:false,clutch_value:0});
+      p.rounds.push({game_num:d,round:p.round,end:1,player:pB,opponent:pA,raw_score:raw,team_a_after:sc.a,team_b_after:sc.b,is_clutch:false,clutch_value:0});
       if (sc.a>=21||sc.b>=21) {
         if (d<3) { p.duel=d+1; p.round=1; p.phase=`d${p.duel}_pa`; showDuelDone(d,sc,pA,pB); return; }
         else { show3WayDone(); return; }
@@ -881,15 +1015,20 @@ function showRoundSum() {
   const p=GS, t=p.type, is2v2=t==='2v2_match'||t==='2v2_game';
   let html='';
   if (is2v2) {
-    const n1=p.e1RawA-p.e1RawB, n2=p.e2RawA-p.e2RawB;
-    const a1=n1>0?n1:0, b1=n1<0?-n1:0, a2=n2>0?n2:0, b2=n2<0?-n2:0;
+    const n1=p.e1RawA-p.e1RawB;
+    const a1=n1>0?n1:0, b1=n1<0?-n1:0;
     html=`<div class="rs-end">End 1 — ${p.aP1} vs ${p.laneA1}</div>
       <div class="rs-row"><span>${p.aP1}: ${p.e1RawA} &nbsp;·&nbsp; ${p.laneA1}: ${p.e1RawB}</span>
-        <span class="${n1>0?'net-pos':n1<0?'net-neg':''}">${n1>0?'A +'+a1:n1<0?'B +'+b1:'Push'}</span></div>
-      <div class="rs-end" style="margin-top:8px">End 2 — ${p.aP2} vs ${p.laneA2}</div>
-      <div class="rs-row"><span>${p.aP2}: ${p.e2RawA} &nbsp;·&nbsp; ${p.laneA2}: ${p.e2RawB}</span>
-        <span class="${n2>0?'net-pos':n2<0?'net-neg':''}">${n2>0?'A +'+a2:n2<0?'B +'+b2:'Push'}</span></div>
-      <div class="rs-row" style="border-top:1px solid #3a3a3a;margin-top:8px;padding-top:8px;font-weight:700">
+        <span class="${n1>0?'net-pos':n1<0?'net-neg':''}">${n1>0?'A +'+a1:n1<0?'B +'+b1:'Push'}</span></div>`;
+    if (p.e2Played) {
+      const n2=p.e2RawA-p.e2RawB, a2=n2>0?n2:0, b2=n2<0?-n2:0;
+      html+=`<div class="rs-end" style="margin-top:8px">End 2 — ${p.aP2} vs ${p.laneA2}</div>
+        <div class="rs-row"><span>${p.aP2}: ${p.e2RawA} &nbsp;·&nbsp; ${p.laneA2}: ${p.e2RawB}</span>
+          <span class="${n2>0?'net-pos':n2<0?'net-neg':''}">${n2>0?'A +'+a2:n2<0?'B +'+b2:'Push'}</span></div>`;
+    } else {
+      html+=`<div class="rs-end" style="margin-top:8px;color:var(--ok)">⚡ End 1 was the game-winner — no End 2 needed</div>`;
+    }
+    html+=`<div class="rs-row" style="border-top:1px solid #3a3a3a;margin-top:8px;padding-top:8px;font-weight:700">
         <span>After Round ${p.round}</span><span>${p.scoreA} – ${p.scoreB}</span></div>`;
   } else {
     const n=p.e1RawA-p.e1RawB, aA=n>0?n:0, bA=n<0?-n:0;
@@ -939,7 +1078,7 @@ function nextRound() {
   p.round++;
   if (t.startsWith('2v2')) p.phase='e1';
   else if (t.startsWith('1v1')&&t!=='1v1v1') p.phase='p1';
-  p.e1RawA=0;p.e1RawB=0;p.e2RawA=0;p.e2RawB=0;
+  p.e1RawA=0;p.e1RawB=0;p.e2RawA=0;p.e2RawB=0;p.e2Played=false;
   throwVal=0; resetDual();
   ge('roundSumCard').style.display='none';
   refreshUI();
@@ -947,17 +1086,24 @@ function nextRound() {
 
 function finishGame() {
   const p=GS, t=p.type;
+  const is2v2=t.startsWith('2v2');
   const aWon=p.scoreA>p.scoreB;
-  const winName=aWon?(t.startsWith('2v2')?p.aP1+' & '+p.aP2:p.aP1):(t.startsWith('2v2')?p.bP1+' & '+p.bP2:p.bP1);
+  const winName=aWon?(is2v2?p.aP1+' & '+p.aP2:p.aP1):(is2v2?p.bP1+' & '+p.bP2:p.bP1);
   p.gameScores.push({a:p.scoreA,b:p.scoreB});
   if(aWon) p.matchWinsA++; else p.matchWinsB++;
   ge('phaseCard').style.display='none'; ge('roundSumCard').style.display='none';
   ge('gameOverCard').style.display='';
+  ge('goBtn').disabled=false; // always re-enable (fixes grey-out across matches)
   if (p.isMatch&&p.matchWinsA<2&&p.matchWinsB<2) {
     ge('goWin').textContent=`🏆 ${winName} wins Game ${p.currentGame}!`;
     ge('goSub').textContent=`Series: ${p.matchWinsA}–${p.matchWinsB}`;
-    ge('goBtn').textContent=`Start Game ${p.currentGame+1} →`;
-    ge('goBtn').onclick=startNextGame;
+    if (is2v2) {
+      ge('goBtn').textContent=`Choose Starting Side for Game ${p.currentGame+1} →`;
+      ge('goBtn').onclick=showSideSelect;
+    } else {
+      ge('goBtn').textContent=`Start Game ${p.currentGame+1} →`;
+      ge('goBtn').onclick=()=>startNextGame(null);
+    }
   } else {
     ge('goWin').textContent=`🏆 ${winName} wins${p.isMatch?' the match':''}!`;
     ge('goSub').textContent=p.isMatch?`Series: ${p.matchWinsA}–${p.matchWinsB}`:`${p.scoreA}–${p.scoreB}`;
@@ -966,20 +1112,43 @@ function finishGame() {
   }
 }
 
-function startNextGame() {
+function showSideSelect() {
+  const p=GS;
+  ge('gameOverCard').style.display='none';
+  const ssc=ge('sideSelectCard'); ssc.style.display='';
+  ge('ssTitle').textContent=`Game ${p.currentGame+1} — Who Throws First?`;
+  ge('ssOpts').innerHTML=[
+    {k:'p1s', lbl:`${p.aP1} & ${p.bP1} throw first`},
+    {k:'p2s', lbl:`${p.aP2} & ${p.bP2} throw first`}
+  ].map(o=>`<div class="lo" data-p="${o.k}" onclick="pickNextSide(this)">${o.lbl}</div>`).join('');
+}
+
+function pickNextSide(el) {
+  document.querySelectorAll('#ssOpts .lo').forEach(l=>l.classList.remove('sel'));
+  el.classList.add('sel');
+  const lane=el.dataset.p;
+  ge('sideSelectCard').style.display='none';
+  startNextGame(lane);
+}
+
+function startNextGame(lane) {
   const p=GS, t=p.type;
   p.currentGame++;p.scoreA=0;p.scoreB=0;p.round=1;
-  p.e1RawA=0;p.e1RawB=0;p.e2RawA=0;p.e2RawB=0;
-  if (t.startsWith('2v2')) p.phase='e1';
+  p.e1RawA=0;p.e1RawB=0;p.e2RawA=0;p.e2RawB=0;p.e2Played=false;
+  p.maxDeficitA=0;p.maxDeficitB=0;
+  if (t.startsWith('2v2')) p.phase=(lane==='p2s')?'e2':'e1';
   else p.phase='p1';
-  ge('gameOverCard').style.display='none'; throwVal=0; resetDual(); refreshUI();
+  ge('gameOverCard').style.display='none';
+  const ssc=ge('sideSelectCard'); if(ssc) ssc.style.display='none';
+  throwVal=0; resetDual(); gsHistory=[]; refreshUI();
 }
 
 function abandonGame() {
   if(!confirm('Abandon this game? No data saved.')) return;
-  GS=null;
+  GS=null; gsHistory=[];
   ge('tracker').style.display='none'; ge('gameSetup').style.display='';
   ge('gameOverCard').style.display='none'; ge('roundSumCard').style.display='none';
+  const ssc=ge('sideSelectCard'); if(ssc) ssc.style.display='none';
 }
 
 // ══════════════════════════════════════════════════════
@@ -1114,7 +1283,16 @@ function computeAllStats() {
 
 function computeRoundStats() {
   const rst={};
-  PLAYERS.forEach(p=>rst[p]={totalRaw:0,throws:0,clutchRaw:0,clutchThrows:0,winRaw:0,winThrows:0,lossRaw:0,lossThrows:0});
+  PLAYERS.forEach(p=>rst[p]={
+    totalRaw:0, throws:0,
+    clutchRaw:0, clutchThrows:0,       // legacy is_clutch counts
+    clutchWtRaw:0, clutchWtTotal:0,    // weighted clutch_value system
+    winRaw:0, winThrows:0,
+    lossRaw:0, lossThrows:0,
+    bigEnds:0,           // times they bagged 3+ in a single end
+    clutchAttempts:0,    // ends where game was in clutch time
+    clutchHits:0         // of those, ends where they scored > 0
+  });
   const gMap={};
   GAMES.forEach(g=>{
     const sa=+g.Score_A,sb=+g.Score_B;
@@ -1123,11 +1301,24 @@ function computeRoundStats() {
   ROUNDS_DATA.forEach(r=>{
     const p=r.Player; if(!rst[p]) return;
     const raw=+(r.Raw_Score||0);
-    const clutch=r.Is_Clutch===true||r.Is_Clutch==='TRUE';
+    // New weighted clutch value; fall back to is_clutch=1.0 for legacy data
+    const cv=+(r.Clutch_Value||0)||((r.Is_Clutch===true||r.Is_Clutch==='TRUE')?1.0:0);
+    const legClutch=r.Is_Clutch===true||r.Is_Clutch==='TRUE';
     rst[p].totalRaw+=raw; rst[p].throws++;
-    if(clutch){rst[p].clutchRaw+=raw;rst[p].clutchThrows++;}
+    if(legClutch){rst[p].clutchRaw+=raw;rst[p].clutchThrows++;}
+    if(cv>0){rst[p].clutchWtRaw+=raw*cv; rst[p].clutchWtTotal+=cv;}
+    if(raw>=3) rst[p].bigEnds++;
+    if(legClutch){rst[p].clutchAttempts++;if(raw>0)rst[p].clutchHits++;}
     const gi=gMap[String(r.GameID)];
     if(gi){gi.winners.includes(p)?(rst[p].winRaw+=raw,rst[p].winThrows++):(rst[p].lossRaw+=raw,rst[p].lossThrows++);}
+  });
+  // Compute derived stats
+  PLAYERS.forEach(p=>{
+    const r=rst[p];
+    r.clutchAvg = r.clutchWtTotal>0 ? r.clutchWtRaw/r.clutchWtTotal
+                : (r.clutchThrows>0 ? r.clutchRaw/r.clutchThrows : null);
+    r.bigEndPct = r.throws>0 ? r.bigEnds/r.throws : 0;
+    r.clutchStrikePct = r.clutchAttempts>0 ? r.clutchHits/r.clutchAttempts : null;
   });
   return rst;
 }
@@ -1286,6 +1477,38 @@ function renderPower() {
   const el2=ge('powerContent');
   const all=computeAllStats(), rst=computeRoundStats();
   const hasRounds=ROUNDS_DATA.length>0;
+
+  // ── 2v2 bag share + pts-per-game (single pass, computed before composite scores) ──
+  const v2GameIds=new Set(), v2TeamInfo={};
+  GAMES.forEach(g=>{
+    const t=g.Type||'';
+    if(t==='2v2_match'||t==='2v2_game'){
+      const id=String(g.GameID); v2GameIds.add(id);
+      v2TeamInfo[id]={teamA:[g.Team_A_P1,g.Team_A_P2].filter(Boolean),teamB:[g.Team_B_P1,g.Team_B_P2].filter(Boolean)};
+    }
+  });
+  const v2Raw={},v2PartnerRaw={},v2GameSet={};
+  PLAYERS.forEach(p=>{v2Raw[p]=0;v2PartnerRaw[p]=0;v2GameSet[p]=new Set();});
+  ROUNDS_DATA.forEach(r=>{
+    const p=r.Player;
+    if(!v2Raw.hasOwnProperty(p)||!v2GameIds.has(String(r.GameID))) return;
+    const raw=+(r.Raw_Score||0);
+    v2Raw[p]+=raw;
+    v2GameSet[p].add(String(r.GameID)+'_'+(r.Game_Num||1));
+    const ti=v2TeamInfo[String(r.GameID)];
+    if(ti){
+      const myTeam=ti.teamA.includes(p)?ti.teamA:ti.teamB.includes(p)?ti.teamB:null;
+      if(myTeam) myTeam.forEach(mate=>{if(mate!==p&&v2PartnerRaw.hasOwnProperty(mate))v2PartnerRaw[mate]+=raw;});
+    }
+  });
+  const v2BagShare={},v2PtsPerGame={};
+  PLAYERS.forEach(p=>{
+    const tot=v2Raw[p]+v2PartnerRaw[p];
+    v2BagShare[p]=tot>0?v2Raw[p]/tot:null;
+    const gc=v2GameSet[p].size;
+    v2PtsPerGame[p]=gc>0?v2Raw[p]/gc:null;
+  });
+
   const scores={}, components={};
   PLAYERS.forEach(p=>{
     const s=all[p],r=rst[p],gp=s.wins+s.losses;
@@ -1293,32 +1516,38 @@ function renderPower() {
     const c1=s.winPct*30;
     const c2=s.recentForm*20;
     const c3=clamp((s.streak+5)/10,0,1)*15;
-    let c4=7.5;
+    // Clutch composite — three signals combined:
+    //   50% output rate  (clutchWtTotal per game, caps at 2.0/game)
+    //   30% hit rate     (% of clutch moments where you scored anything)
+    //   20% delta        (do you actually perform better under pressure?)
+    let c4=7.5, clutchComposite=0.5; // fallback: neutral
     if(hasRounds&&r.throws>5){
+      const cvRate=r.clutchWtTotal/Math.max(gp,1);
+      const cvScore=clamp(cvRate/2.0,0,1);
+      const hitScore=r.clutchAttempts>0?(r.clutchStrikePct||0):0.5;
       const nA=r.totalRaw/r.throws;
-      const cA=r.clutchThrows>0?r.clutchRaw/r.clutchThrows:nA;
-      c4=clamp((cA/Math.max(nA,0.1))*7.5,0,15);
+      const cdLocal=r.clutchAvg!==null?r.clutchAvg-nA:0;
+      const deltaScore=clamp(0.5+cdLocal/4,0,1);
+      clutchComposite=cvScore*0.5+hitScore*0.3+deltaScore*0.2;
+      c4=clamp(clutchComposite*10,0,10);
     }
+    // Carry: bag share — 50% = equal partner (score 5), higher = you carry more (toward 10)
     let c5=5;
-    if(hasRounds&&r.winThrows+r.lossThrows>5){
-      const wA=r.winThrows>0?r.winRaw/r.winThrows:0;
-      const lA=r.lossThrows>0?r.lossRaw/r.lossThrows:wA;
-      c5=clamp(5+(wA-lA)*2,0,10);
-    }
-    // +/- component: use cumulative point differential (ptsDiff)
+    if(v2BagShare[p]!==null) c5=clamp(7.5+(v2BagShare[p]-0.5)*30,0,15);
     const c6=clamp(5+(s.ptsDiff/Math.max(s.gamesWon+s.gamesLost,1)),0,10);
     const total=c1+c2+c3+c4+c5+c6;
     scores[p]=total;
-    components[p]={c1,c2,c3,c4,c5,c6,total};
+    components[p]={c1,c2,c3,c4,c5,c6,total,clutchComposite};
   });
   const ranked=PLAYERS.filter(p=>scores[p]!==null).sort((a,b)=>scores[b]-scores[a]);
   if(!ranked.length){el2.innerHTML='<div class="no-data">No games yet.</div>';return;}
+
   const PK='cn_prev_power_ranks';
   const prev=JSON.parse(localStorage.getItem(PK)||'{}');
   const cur={};
   ranked.forEach((p,i)=>cur[p]=i+1);
   let html=`<div style="font-size:12px;color:var(--dim);margin-bottom:14px">
-    Composite: Win% (30) · Form (20) · Streak (15) · Clutch (15) · Carry (10) · +/- (10)${!hasRounds?' · <em>Clutch & Carry unlock with throw data</em>':''}
+    Composite: Win% (30) · Form (20) · Streak (15) · Clutch (10) · Carry (15) · +/- (10)${!hasRounds?' · <em>Clutch & Carry unlock with throw data</em>':''}
   </div>`;
   ranked.forEach((p,i)=>{
     const rank=i+1,sc=scores[p],comp=components[p];
@@ -1327,12 +1556,19 @@ function renderPower() {
     let arrow='–',arrowCls='nc';
     if(pr&&pr!==rank){arrow=rank<pr?'↑':'↓';arrowCls=rank<pr?'up':'dn';}
     const nAvg=r.throws>0?(r.totalRaw/r.throws).toFixed(1):'—';
-    const cAvg=r.clutchThrows>0?(r.clutchRaw/r.clutchThrows).toFixed(1):'—';
-    const cd=(r.throws>0&&r.clutchThrows>0)?((r.clutchRaw/r.clutchThrows)-(r.totalRaw/r.throws)):null;
+    const cd=(r.throws>0&&r.clutchAvg!==null)?((r.clutchAvg)-(r.totalRaw/r.throws)):null;
     const cdStr=cd!==null?(cd>=0?'+':'')+cd.toFixed(1):'—';
     const cdColor=cd===null?'var(--gold)':cd>0?'var(--ok)':cd<0?'var(--red)':'var(--dim)';
+    // Clutch Score displayed as 0–10 — same composite used for c4
+    const clutchDisplayVal=r.throws>5?comp.clutchComposite*10:null;
+    const clutchScoreStr=clutchDisplayVal!==null?clutchDisplayVal.toFixed(1):'—';
+    const clutchScoreColor=clutchDisplayVal===null?'var(--gold)':clutchDisplayVal>=7?'var(--ok)':clutchDisplayVal>=4?'var(--gold)':'var(--red)';
     const ptsDiff=s.ptsDiff;
-    const syn=makeSynopsis(p,rank,s,r,hasRounds,cd);
+    const bigEndStr=r.throws>5?Math.round((r.bigEndPct||0)*100)+'%':'—';
+    const bigEndColor=r.throws<=5?'var(--gold)':r.bigEndPct>=0.4?'var(--ok)':r.bigEndPct<0.2?'var(--red)':'var(--gold)';
+    const csStr=r.clutchStrikePct!==null&&r.clutchStrikePct!==undefined?Math.round(r.clutchStrikePct*100)+'%':'—';
+    const csColor=r.clutchStrikePct===null||r.clutchStrikePct===undefined?'var(--gold)':r.clutchStrikePct>=0.6?'var(--ok)':r.clutchStrikePct<0.35?'var(--red)':'var(--gold)';
+    const syn=makeSynopsis(p,rank,s,r,hasRounds,cd,prev[p]);
     html+=`<div class="pw-card">
       <div class="pw-head">
         <div class="pw-rank">${rank}</div>
@@ -1342,19 +1578,21 @@ function renderPower() {
       <div class="pw-syn">${syn}</div>
       <div class="pw-stats">
         <div class="pw-stat"><div class="pw-sv">${Math.round(s.winPct*100)}%</div><div class="pw-sl">Win %</div></div>
-        <div class="pw-stat"><div class="pw-sv">${nAvg}</div><div class="pw-sl">Avg/Throw</div></div>
-        <div class="pw-stat"><div class="pw-sv" style="color:${cdColor}">${cdStr}</div><div class="pw-sl">Clutch Δ</div></div>
-        <div class="pw-stat"><div class="pw-sv">${Math.round(s.wins+s.losses)}</div><div class="pw-sl">Games</div></div>
+        <div class="pw-stat"><div class="pw-sv">${nAvg}</div><div class="pw-sl">Pts/Throw <span style="color:${cdColor}">(${cdStr})</span></div></div>
+        <div class="pw-stat"><div class="pw-sv" style="color:${clutchScoreColor}">${clutchScoreStr}</div><div class="pw-sl">Clutch Score</div></div>
+        <div class="pw-stat"><div class="pw-sv" style="color:${bigEndColor}">${bigEndStr}</div><div class="pw-sl">Big End %</div></div>
         <div class="pw-stat"><div class="pw-sv" style="color:${s.streak>0?'var(--ok)':s.streak<0?'var(--red)':'var(--dim)'}">${s.streak>0?'+'+s.streak:s.streak}</div><div class="pw-sl">Streak</div></div>
         <div class="pw-stat"><div class="pw-sv" style="color:${ptsDiff>0?'var(--ok)':ptsDiff<0?'var(--red)':'var(--dim)'}">${ptsDiff>=0?'+':''}${ptsDiff}</div><div class="pw-sl">+/- Pts</div></div>
+        <div class="pw-stat"><div class="pw-sv">${v2PtsPerGame[p]!==null?v2PtsPerGame[p].toFixed(1):'—'}</div><div class="pw-sl">Pts/Game (2v2)</div></div>
+        <div class="pw-stat"><div class="pw-sv" style="color:${csColor}">${csStr}</div><div class="pw-sl">Clutch Hit %</div></div>
       </div>
       <button class="pw-bkd-btn" id="bkdbtn_${p}" onclick="toggleBreakdown('${p}')">📊 Score Breakdown</button>
       <div class="pw-bkd" id="bkd_${p}">
         ${bkdRow('Win %', comp.c1.toFixed(1), 30, comp.c1/30)}
         ${bkdRow('Recent Form', comp.c2.toFixed(1), 20, comp.c2/20)}
         ${bkdRow('Streak', comp.c3.toFixed(1), 15, comp.c3/15)}
-        ${bkdRow('Clutch', comp.c4.toFixed(1), 15, comp.c4/15)}
-        ${bkdRow('Carry', comp.c5.toFixed(1), 10, comp.c5/10)}
+        ${bkdRow('Clutch', comp.c4.toFixed(1), 10, comp.c4/10)}
+        ${bkdRow('Carry', comp.c5.toFixed(1), 15, comp.c5/15)}
         ${bkdRow('+/- Pts', comp.c6.toFixed(1), 10, comp.c6/10)}
         <div class="pw-bkd-row"><span class="pw-bkd-label" style="font-weight:700;color:var(--gold)">TOTAL</span><div class="pw-bkd-bar-wrap"></div><span class="pw-bkd-val">${sc.toFixed(1)}</span><span class="pw-bkd-max">/ 100</span></div>
       </div>
@@ -1386,7 +1624,7 @@ function toggleBreakdown(p) {
 // ══════════════════════════════════════════════════════
 //  PLAYER SYNOPSIS
 // ══════════════════════════════════════════════════════
-function makeSynopsis(p, rank, s, r, hasRounds, cd) {
+function makeSynopsis(p, rank, s, r, hasRounds, cd, prevRank) {
   const gp = Math.round(s.wins + s.losses);
   const wp = Math.round(s.winPct * 100);
   const l5 = s.last5.slice(-5);
@@ -1398,23 +1636,32 @@ function makeSynopsis(p, rank, s, r, hasRounds, cd) {
   const isCold  = s.recentForm <= 0.25 || s.streak <= -3;
   const isHot   = s.streak >= 3 || (l5wins >= 4 && l5count >= 4);
   const isChoke = hasRounds && cd !== null && cd < -0.7 && s.recentForm <= 0.4 && gp >= 3;
+  const justDroppedLast = rank === 4 && prevRank != null && prevRank !== 4;
+  const stuckLast       = rank === 4 && prevRank === 4;
 
   // ── Opening line ──
   if (rank === 1) {
-    if (wp >= 70 && isHot) lines.push(`${p} is a problem right now — ${wp}% and rolling on a ${s.streak}-game streak.`);
-    else if (wp >= 65)     lines.push(`${p} is bullying the leaderboard at ${wp}% — somebody do something.`);
-    else                   lines.push(`${p} holds the #1 spot at ${wp}% across ${gp} games.`);
+    if (wp >= 70 && isHot) lines.push(`${p} is a problem right now — a ${wp}% win % and rolling on a ${s.streak}-game streak.`);
+    else if (wp >= 65)     lines.push(`${p} is bullying the leaderboard with a ${wp}% win % — somebody do something.`);
+    else                   lines.push(`${p} holds the #1 spot with a ${wp}% win % across ${gp} games.`);
   } else if (rank === 2) {
-    if (isHot)  lines.push(`${p} is breathing down #1's neck — ${wp}% and feeling it lately.`);
-    else        lines.push(`${p} is at #2 with ${wp}% — one hot week from the top.`);
+    if (isHot)  lines.push(`${p} is breathing down #1's neck — a ${wp}% win % and feeling it lately.`);
+    else        lines.push(`${p} is at #2 with a ${wp}% win % — one hot week from the top.`);
   } else if (rank === 3) {
-    if (isCold) lines.push(`${p} is stuck at #3 with ${wp}% — sliding the wrong way.`);
-    else        lines.push(`${p} is at #3 — ${wp}% and right in the mix.`);
+    if (isCold) lines.push(`${p} is stuck at #3 with a ${wp}% win % — sliding the wrong way.`);
+    else        lines.push(`${p} is at #3 with a ${wp}% win % — right in the mix.`);
   } else if (rank === 4) {
-    if (wp < 35) lines.push(`${p} is in a rough spot at ${wp}% — last place and it's not close.`);
-    else         lines.push(`${p} is at #4 with ${wp}% — a couple wins away from climbing.`);
+    if (justDroppedLast) {
+      if (wp < 35) lines.push(`${p} has slid all the way to last place with a ${wp}% win %. Cost of doing business. We'll call it that.`);
+      else         lines.push(`${p} finds themselves at #4 with a ${wp}% win %. Cost of doing business — a couple wins and they're right back.`);
+    } else if (stuckLast) {
+      if (wp < 35) lines.push(`${p} is in a rough spot at a ${wp}% win % — last place and it's not close.`);
+      else         lines.push(`${p} is at #4 with a ${wp}% win % — a couple wins away from climbing.`);
+    } else {
+      lines.push(`${p} is at #4 with a ${wp}% win % — the journey begins.`);
+    }
   } else {
-    lines.push(`${p} sits at #${rank} — ${wp}% in ${gp} games.`);
+    lines.push(`${p} sits at #${rank} with a ${wp}% win % in ${gp} games.`);
   }
 
   // ── Streak / recent form ──
@@ -1460,6 +1707,20 @@ function makeSynopsis(p, rank, s, r, hasRounds, cd) {
     else if (s.ptsDiff < -15) lines.push(`Down ${Math.abs(s.ptsDiff)} pts on the season. The scoreboard doesn't lie.`);
     else if (s.avgMargin > 3) lines.push(`Wins tend to be comfortable — avg margin of +${s.avgMargin.toFixed(1)}.`);
     else if (s.avgMargin < -3) lines.push(`Gets worked when they lose — avg margin of ${s.avgMargin.toFixed(1)}.`);
+  }
+
+  // ── Big End (3+ bags in hole) ──
+  if (hasRounds && r.throws > 5) {
+    const bep = r.bigEndPct || 0;
+    if (bep >= 0.4) lines.push(`Packs it in: ${Math.round(bep*100)}% of their ends go 3+ bags. This is a scorer.`);
+    else if (bep <= 0.1) lines.push(`Rarely puts up big numbers — only ${Math.round(bep*100)}% of ends go 3+ in the hole.`);
+  }
+
+  // ── Clutch Hit Rate ──
+  if (hasRounds && r.clutchStrikePct !== null && r.clutchAttempts >= 3) {
+    const csp = Math.round(r.clutchStrikePct * 100);
+    if (r.clutchStrikePct >= 0.75) lines.push(`Clutch machine — scores in ${csp}% of their pressure opportunities.`);
+    else if (r.clutchStrikePct < 0.35) lines.push(`Goes quiet when it matters most — only delivers in ${csp}% of pressure spots.`);
   }
 
   return lines.slice(0, 3).join(' ');
